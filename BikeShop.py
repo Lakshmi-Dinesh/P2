@@ -21,15 +21,14 @@ class BikeShop:
             csv_file = csv.DictReader(file)
             for lines in csv_file:
                 self.inv_list.append(lines)
-        print(self.inv_list)
+        print("Inventory Initialized")
 
     def check_inventory(self, r_type, n):
+        print("Checking inventory...")
         for item in self.inv_list:
-            print(item)
             if item['TYPE'] == r_type:
                 self.row = self.inv_list.index(item)
                 avl = int(item['AVL'])
-                print(f"avl={avl}")
                 return True if avl >= n else False
 
     def set_promo(self):
@@ -40,7 +39,7 @@ class BikeShop:
         self.update_inventory(n)
         self.update_revenue()
         print(f"Rented {n} bike(s) on {self.inv_list[self.row]['TYPE']} basis.")
-        print(f"You will be charged {self.cost}CAD on return")
+        print(f"You will be charged CAD {self.cost}")
 
     def update_inventory(self, n):
         out = int(self.inv_list[self.row]['OUT'])
@@ -49,7 +48,11 @@ class BikeShop:
         out += n
         self.inv_list[self.row]['OUT'] = str(out)
         self.inv_list[self.row]['AVL'] = str(avl)
-        self.update_inv_file()
+        try:
+            self.update_inv_file()
+        except Exception as e:
+            print(e)
+            print("Error updating Inventory File!Stop and rerun!")
 
     def update_inv_file(self):
         header = ['TYPE', 'TOTAL', 'OUT', 'AVL', 'RATE']
@@ -57,10 +60,12 @@ class BikeShop:
             writer = csv.DictWriter(csvfile, fieldnames=header)
             writer.writeheader()
             writer.writerows(self.inv_list)
+        print("Inventory updated")
 
     def update_revenue(self):
         with open(self.rev_file, 'a+') as file_obj:
             file_obj.write(str(self.cost) + '\n')
+        print("Revenue updated")
 
     def calc_rev(self):
         tot = 0
@@ -87,16 +92,31 @@ class BikeShop:
         except TypeError:
             print("Only numbers are to be entered. Retry!")
             self.print_options()
+        except Exception as e:
+            print(e)
+            print("Incorrect entry! Try again!")
+            self.print_options()
+
         if sel not in range(1, 6):
             print("Entry not in range! Retry")
             self.print_options()
         if sel == 1:
             self.display_avl()
         elif sel == 2:
-            self.rent_options()
+            try:
+                self.rent_options()
+            except Exception as e:
+                print(e)
+                print("Error!Please enter a number only!")
+                self.rent_options()
         elif sel == 3:
-            n = int(input("How many bikes would you like to return: "))
-            self.ret_bikes(n)
+            try:
+                n = int(input("How many bikes would you like to return: "))
+                self.ret_bikes(n)
+            except Exception as e:
+                print(e)
+                print("Error! Please enter a non negative or non zero number only!")
+                self.print_options()
         elif sel == 4:
             self.calc_rev()
         else:
@@ -121,6 +141,10 @@ class BikeShop:
         except TypeError:
             print("Please enter only numbers")
             self.get_n(start)
+        except Exception as e:
+            print(e)
+            print("Error! You need to enter a number only!")
+            self.get_n(start)
 
     def rent_options(self):
         n = self.get_n(1)
@@ -134,7 +158,6 @@ class BikeShop:
             r_type = input("What type of Family-rental would you like? "
                            "(hourly, daily, weekly): ").lower().strip()
         r_type = self.process_r_type(r_type)
-        print("rtype = " + r_type)
         if self.check_inventory(r_type, n):
             self.rent_bike(n)
         else:

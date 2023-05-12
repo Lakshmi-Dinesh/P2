@@ -7,7 +7,7 @@ values = [['hourly', '50', '0', '50', '5'],
 
 filename = "inventory.csv"
 
-with open(filename, 'w') as csvfile:
+with open(filename, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
     csvwriter.writerow(header)
     csvwriter.writerows(values)
