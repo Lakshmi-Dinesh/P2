@@ -32,7 +32,7 @@ class BikeShop:
                 return True if avl >= n else False
 
     def set_promo(self):
-        self.promo = 0.3
+        self.promo = 0.7
 
     def rent_bike(self, n):
         self.cost = int(self.inv_list[self.row]['RATE']) * n * self.promo
