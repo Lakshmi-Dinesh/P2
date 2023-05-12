@@ -37,9 +37,15 @@ class BikeShop:
     def rent_bike(self, n):
         self.cost = int(self.inv_list[self.row]['RATE']) * n * self.promo
         self.update_inventory(n)
-        self.update_revenue()
         print(f"Rented {n} bike(s) on {self.inv_list[self.row]['TYPE']} basis.")
-        print(f"You will be charged CAD {self.cost}")
+        print(f"You will be charged CAD {self.cost} {self.inv_list[self.row]['TYPE']} (*without promo)")
+        mul = int(input("How many (days/hours/weeks) would you like to rent for?: "))
+        self.cost *= mul
+        self.cost *= self.promo
+        self.cost = round(self.cost, 2)
+        print(f"Total cost for rental (after applying promotions if any) = CAD {self.cost}\n")
+        self.update_revenue()
+        self.display_avl()
 
     def update_inventory(self, n):
         out = int(self.inv_list[self.row]['OUT'])
@@ -87,6 +93,7 @@ class BikeShop:
         self.process_input()
 
     def process_input(self):
+        sel = 0
         try:
             sel = int(input("Enter your choice(1-5): "))
         except TypeError:
@@ -181,7 +188,7 @@ class BikeShop:
                           "Please check and re-enter number of bikes to return: "))
             self.ret_bikes(n)
         self.update_inventory(n * -1)
-        print(f"{n} bikes returned! Inventory updated!\n")
+        print(f"{n} bikes returned!\n")
         self.display_avl()
 
 
